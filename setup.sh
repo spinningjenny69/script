@@ -77,9 +77,6 @@ docker-compose up -d
 cd ..
 
 # Part 4: Setup Mailcow
-su -c 'bash -c "
-umask 0022
-cd /opt
 git clone https://github.com/mailcow/mailcow-dockerized
 cd mailcow-dockerized
 

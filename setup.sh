@@ -1,23 +1,56 @@
 #!/bin/bash
 
-# Function to check and install required packages
-check_and_install() {
-  PACKAGE=$1
-  if ! command -v $PACKAGE &> /dev/null; then
-    echo "$PACKAGE is not installed. Installing..."
-    sudo apt-get update
-    sudo apt-get install -y $PACKAGE
-  else
-    echo "$PACKAGE is already installed."
-  fi
+# Function to install Docker
+install_docker() {
+  echo "Installing Docker..."
+
+  # Add Docker's official GPG key and repository
+  sudo apt-get update
+  sudo apt-get install -y ca-certificates curl gnupg
+
+  sudo install -m 0755 -d /etc/apt/keyrings
+  sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+  sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+  # Add the Docker repository to apt sources
+  echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+  # Update package list and install Docker
+  sudo apt-get update
+  sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+  echo "Docker installed successfully."
 }
 
-# Check and install docker, docker-compose, curl, openssl, and git
-check_and_install docker
-check_and_install docker-compose
-check_and_install curl
-check_and_install openssl
-check_and_install git
+# Function to install the latest version of Docker Compose
+install_docker_compose() {
+  echo "Installing the latest version of Docker Compose..."
+
+  # Fetch the latest Docker Compose version
+  LATEST=$(curl -Ls -w %{url_effective} -o /dev/null https://github.com/docker/compose/releases/latest)
+  LATEST=${LATEST##*/}
+  
+  # Download and install Docker Compose
+  sudo curl -L https://github.com/docker/compose/releases/download/$LATEST/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+  sudo chmod +x /usr/local/bin/docker-compose
+
+  echo "Docker Compose installed successfully."
+}
+
+# Function to check if a command exists and install it if not
+check_command() {
+  COMMAND=$1
+  INSTALL_FUNC=$2
+  if ! command -v $COMMAND &> /dev/null; then
+    echo "$COMMAND is not installed. Installing..."
+    $INSTALL_FUNC
+  else
+    echo "$COMMAND is already installed."
+  fi
+}
 
 # Part 1: Setup listmonk
 mkdir listmonk && cd listmonk
@@ -84,7 +117,7 @@ read -p "Enter your domain for OnlyOffice (e.g., yourdomain.com): " ONLYOFFICE_D
 read -p "Enter your email for Let's Encrypt (e.g., email@example.com): " ONLYOFFICE_EMAIL
 JWT_SECRET=$(openssl rand -base64 32)
 
-sudo docker run -i -t -d -p 80:80 -p 443:443 --restart=always \
+sudo docker run -d -p 81:81 -p 444:444 --restart=always \
     -e LETS_ENCRYPT_DOMAIN=$ONLYOFFICE_DOMAIN \
     -e LETS_ENCRYPT_MAIL=$ONLYOFFICE_EMAIL \
     -e JWT_SECRET=$JWT_SECRET onlyoffice/documentserver

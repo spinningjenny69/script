@@ -107,7 +107,7 @@ echo "Please configure the run.env file"
 nano env/run.env
 
 # Run Akaunting with initial setup
-AKAUNTING_SETUP=true docker-compose up -d
+AKAUNTING_SETUP=true docker compose up -d
 
 echo "Please complete the Akaunting setup through the web interface at http://your-docker-host:8080."
 

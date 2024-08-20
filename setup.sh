@@ -14,6 +14,8 @@ install_docker() {
   echo "Docker installed successfully."
 }
 
+install_docker
+
 # Part 1: Run the docker command for cosmos-server
 docker run -d --network host --privileged --name cosmos-server -h cosmos-server --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v /:/mnt/host -v /var/lib/cosmos:/config azukaar/cosmos-server:latest
 

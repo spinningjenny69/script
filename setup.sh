@@ -24,10 +24,6 @@ read -p "Press enter after completing the cosmos web setup (enter the IP address
 git clone https://github.com/mailcow/mailcow-dockerized
 cd mailcow-dockerized
 
-# Modify Mailcow ports (change 80 to 8081 and 443 to 8443)
-sed -i 's/HTTP_PORT=80/HTTP_PORT=8086/g' mailcow.conf
-sed -i 's/HTTPS_PORT=443/HTTPS_PORT=8443/g' mailcow.conf
-
 ./generate_config.sh
 
 # Ask user if they want to edit mailcow.conf
@@ -35,6 +31,10 @@ read -p "Do you want to edit mailcow.conf? (y/n) " EDIT_CONFIG
 if [ "$EDIT_CONFIG" == "y" ]; then
   nano mailcow.conf
 fi
+
+# Modify Mailcow ports (change 80 to 8081 and 443 to 8443)
+sed -i 's/HTTP_PORT=80/HTTP_PORT=8086/g' mailcow.conf
+sed -i 's/HTTPS_PORT=443/HTTPS_PORT=8443/g' mailcow.conf
 
 docker compose pull
 docker compose up -d

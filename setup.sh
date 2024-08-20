@@ -29,8 +29,8 @@ cd mailcow-dockerized
 ./generate_config.sh
 
 # Ask user if they want to edit mailcow.conf
-read -p \"Do you want to edit mailcow.conf? (y/n) \" EDIT_CONFIG
-if [ \"\$EDIT_CONFIG\" == \"y\" ]; then
+read -p "Do you want to edit mailcow.conf? (y/n) " EDIT_CONFIG
+if [ "$EDIT_CONFIG" == "y" ]; then
   nano mailcow.conf
 fi
 

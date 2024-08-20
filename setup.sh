@@ -39,7 +39,7 @@ sed -i 's/HTTPS_PORT=443/HTTPS_PORT=8443/g' mailcow.conf
 docker compose pull
 docker compose up -d
 
-cd ..
+cd /root/
 
 # Part 3: Setup OpenProject
 git clone https://github.com/opf/openproject-deploy --depth=1 --branch=stable/14 openproject
@@ -58,7 +58,8 @@ cd /root/
 # Part 4: Setup listmonk
 mkdir listmonk && cd listmonk
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/knadh/listmonk/master/install-prod.sh)"
-cd ..
+
+cd /root/
 
 # Part 5: Setup plausible
 git clone https://github.com/plausible/community-edition plausible
@@ -79,7 +80,7 @@ sed -i "s|TOTP_VAULT_KEY=replace-me|TOTP_VAULT_KEY=$TOTP_VAULT_KEY|g" plausible-
 # Run docker compose for plausible
 docker compose up -d
 
-cd ..
+cd /root/
 
 # Part 6: Setup OnlyOffice
 echo "Setting up OnlyOffice Document Server"
@@ -104,15 +105,14 @@ cp env/db.env.example env/db.env
 cp env/run.env.example env/run.env
 
 # Modify Akaunting ports (change 80 to 8085 and 443 to 8446)
-sed -i 's/80:80/8085:80/g' docker-compose.yml
-sed -i 's/443:443/8446:443/g' docker-compose.yml
+sed -i 's/8080:80/8085:80/g' docker-compose.yml
 
 # Edit the env/db.env file
 echo "Please configure the db.env file"
 nano env/db.env
 
 # Edit the env/run.env file
-echo "Please configure the run.env file. Change the ports from 80 to 8045 and 443 to 8446"
+echo "Please configure the run.env file"
 nano env/run.env
 
 # Run Akaunting with initial setup

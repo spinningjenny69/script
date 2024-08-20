@@ -56,10 +56,10 @@ docker compose up -d
 cd /root/
 
 # Part 4: Setup listmonk
-mkdir listmonk && cd listmonk
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/knadh/listmonk/master/install-prod.sh)"
+#mkdir listmonk && cd listmonk
+#bash -c "$(curl -fsSL https://raw.githubusercontent.com/knadh/listmonk/master/install-prod.sh)"
 
-cd /root/
+#cd /root/
 
 # Part 5: Setup plausible
 git clone https://github.com/plausible/community-edition plausible

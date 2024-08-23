@@ -42,31 +42,36 @@ docker compose up -d
 cd /root/
 
 # Part 3: Setup OpenProject
-git clone https://github.com/opf/openproject-deploy --depth=1 --branch=stable/14 openproject
-cd openproject/compose
 
-# Modify OpenProject ports (change 80 to 8082, 443 to 8444, and 8080 to 8083)
-sed -i 's/80:80/8082:80/g' docker-compose.yml
-sed -i 's/443:443/8444:443/g' docker-compose.yml
-sed -i 's/8080:8080/8083:8080/g' docker-compose.yml
+# Prompt for the hostname
+read -p "Enter the hostname for OpenProject (e.g., openproject.yourdomain.com): " OPENPROJECT_HOSTNAME
 
-docker compose pull
-docker compose up -d
+# Generate a random secret key
+OPENPROJECT_SECRET_KEY_BASE=$(openssl rand -base64 48)
+
+# Run the OpenProject Docker container with the specified hostname and secret key
+docker run -d \
+  --name openproject \
+  -e OPENPROJECT_SECRET_KEY_BASE=$OPENPROJECT_SECRET_KEY_BASE \
+  -e OPENPROJECT_HOST__NAME=$OPENPROJECT_HOSTNAME \
+  -e OPENPROJECT_HTTPS=true \
+  -e OPENPROJECT_DEFAULT__LANGUAGE=de \
+  openproject/openproject:14
 
 cd /root/
 
-# Part 4: Setup listmonk
-#mkdir listmonk && cd listmonk
-#bash -c "$(curl -fsSL https://raw.githubusercontent.com/knadh/listmonk/master/install-prod.sh)"
+#Part 4: Setup listmonk
+mkdir listmonk && cd listmonk
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/knadh/listmonk/master/install-prod.sh)"
 
-#cd /root/
+cd /root/
 
 # Part 5: Setup plausible
 git clone https://github.com/plausible/community-edition plausible
 cd plausible
 
 # Ask for BASE_URL
-read -p "Enter the BASE_URL for plausible: " BASE_URL
+read -p "Enter the BASE_URL (eg. plausible.yourdomain.com) for plausible: " BASE_URL
 
 # Generate secure keys
 SECRET_KEY_BASE=$(openssl rand -base64 48)
@@ -82,19 +87,7 @@ docker compose up -d
 
 cd /root/
 
-# Part 6: Setup OnlyOffice
-echo "Setting up OnlyOffice Document Server"
-read -p "Enter your domain for OnlyOffice (e.g., yourdomain.com): " ONLYOFFICE_DOMAIN
-read -p "Enter your email for Let's Encrypt (e.g., email@example.com): " ONLYOFFICE_EMAIL
-JWT_SECRET=$(openssl rand -base64 32)
-
-# Modify OnlyOffice ports (change 80 to 8084 and 443 to 8445)
-sudo docker run -d --name onlyoffice -p 8084:80 -p 8445:443 --restart=always \
-    -e LETS_ENCRYPT_DOMAIN=$ONLYOFFICE_DOMAIN \
-    -e LETS_ENCRYPT_MAIL=$ONLYOFFICE_EMAIL \
-    -e JWT_SECRET=$JWT_SECRET onlyoffice/documentserver
-
-# Part 7: Setup Akaunting
+# Part 6: Setup Akaunting
 echo "Setting up Akaunting"
 
 git clone https://github.com/akaunting/docker akaunting
@@ -118,7 +111,7 @@ nano env/run.env
 # Run Akaunting with initial setup
 AKAUNTING_SETUP=true docker compose up -d
 
-echo "Please complete the Akaunting setup through the web interface at http://your-docker-host:8085."
+echo "Please complete the Akaunting setup through the web interface. Add a new URL in cosmos then go to your specified domain!"
 
 read -p "Press enter after completing the Akaunting web setup to continue..."
 

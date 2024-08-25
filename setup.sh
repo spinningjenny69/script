@@ -18,7 +18,11 @@ install_docker
 # Part 1: Run the docker command for cosmos-server
 docker run -d --network host --privileged --name cosmos-server -h cosmos-server --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v /:/mnt/host -v /var/lib/cosmos:/config azukaar/cosmos-server:latest
 
-read -p "Press enter after completing the cosmos web setup (enter the IP address of the server then : and port 80, e.g., 127.0.0.1:80) to continue..."
+# Extract the IP address (this assumes a single IP; adjust for multiple IPs if needed)
+server_ip=$(hostname -I | awk '{print $1}')
+
+# Display the prompt with the IP address included
+read -p "Press enter after completing the Cosmos web setup (enter this in your browser = $server_ip:80) to continue..."
 
 # Part 2: Setup Mailcow
 git clone https://github.com/mailcow/mailcow-dockerized
@@ -71,7 +75,7 @@ git clone https://github.com/plausible/community-edition plausible
 cd plausible
 
 # Ask for BASE_URL
-read -p "Enter the BASE_URL (important! include https:// ! eg. https://plausible.yourdomain.com) for plausible: " BASE_URL
+read -p "Enter the BASE_URL (IMPORTANT! include https:// ! eg. https://plausible.yourdomain.com) for plausible: " BASE_URL
 
 # Generate secure keys
 SECRET_KEY_BASE=$(openssl rand -base64 48)

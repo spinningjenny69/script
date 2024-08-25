@@ -63,7 +63,7 @@ cd /root/
 #Part 4: Setup listmonk
 mkdir listmonk && cd listmonk
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/knadh/listmonk/master/install-prod.sh)"
-
+grep 'admin_password = ' config.toml
 cd /root/
 
 # Part 5: Setup plausible
@@ -71,7 +71,7 @@ git clone https://github.com/plausible/community-edition plausible
 cd plausible
 
 # Ask for BASE_URL
-read -p "Enter the BASE_URL (eg. plausible.yourdomain.com) for plausible: " BASE_URL
+read -p "Enter the BASE_URL (important! include https:// ! eg. https://plausible.yourdomain.com) for plausible: " BASE_URL
 
 # Generate secure keys
 SECRET_KEY_BASE=$(openssl rand -base64 48)

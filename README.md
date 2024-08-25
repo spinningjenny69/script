@@ -1,0 +1,1 @@
+This simple script installs the most imporant tools for your business. You need to configure DNS and in the cosmos web ui, but everything else is automated. In cosmos you should also install nextcloud, duplicati and vaultwarden. These can be found in the marketplace

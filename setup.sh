@@ -74,17 +74,13 @@ cd /root/
 git clone https://github.com/plausible/community-edition plausible
 cd plausible
 
-# Ask for BASE_URL
-read -p "Enter the BASE_URL (IMPORTANT! include https:// ! eg. https://plausible.yourdomain.com) for plausible: " BASE_URL
+# Create and configure the .env file
+touch .env
 
-# Generate secure keys
-SECRET_KEY_BASE=$(openssl rand -base64 48)
-TOTP_VAULT_KEY=$(openssl rand -base64 32)
-
-# Replace placeholders in plausible-conf.env
-sed -i "s|BASE_URL=replace-me|BASE_URL=$BASE_URL|g" plausible-conf.env
-sed -i "s|SECRET_KEY_BASE=replace-me|SECRET_KEY_BASE=$SECRET_KEY_BASE|g" plausible-conf.env
-sed -i "s|TOTP_VAULT_KEY=replace-me|TOTP_VAULT_KEY=$TOTP_VAULT_KEY|g" plausible-conf.env
+# Prompt for BASE_URL and set the environment variables
+read -p "Enter the BASE_URL (IMPORTANT! include https:// ! eg. https://plausible.yourdomain.com): " BASE_URL
+echo "BASE_URL=$BASE_URL" >> .env
+echo "SECRET_KEY_BASE=$(openssl rand -base64 48)" >> .env
 
 # Run docker compose for plausible
 docker compose up -d
